@@ -1,6 +1,7 @@
 import { AuthProvider } from "@/context/AuthContext";
 import { Stack } from "expo-router";
 import { MD3LightTheme, Provider } from "react-native-paper";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 const theme = {
   ...MD3LightTheme,
   colors: {
@@ -11,10 +12,12 @@ const theme = {
 
 export default function RootLayout() {
   return (
-    <Provider theme={theme}>
-      <AuthProvider>
-        <Stack screenOptions={{ headerShown: false }} />
-      </AuthProvider>
-    </Provider>
+    <AuthProvider>
+      <Provider theme={theme}>
+        <SafeAreaProvider>
+          <Stack screenOptions={{ headerShown: false }} />
+        </SafeAreaProvider>
+      </Provider>
+    </AuthProvider>
   );
 }

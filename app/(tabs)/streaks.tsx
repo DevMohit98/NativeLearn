@@ -2,7 +2,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-paper";
-export default function About() {
+export default function Streaks() {
   const { logout } = useAuth();
   const router = useRouter();
   const handleLogout = async () => {

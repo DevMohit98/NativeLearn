@@ -1,33 +1,57 @@
-import AntDesign from "@expo/vector-icons/AntDesign";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 export default function TabsLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "coral" }}>
+    <Tabs
+      screenOptions={{
+        headerStyle: { backgroundColor: "#F5F5F5" },
+        headerShadowVisible: false,
+        tabBarStyle: {
+          backgroundColor: "#F5F5F5",
+          borderTopWidth: 0,
+          elevation: 0,
+          shadowOpacity: 0,
+        },
+        tabBarActiveTintColor: "#6200ee",
+        tabBarInactiveTintColor: "#666666",
+      }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
-          tabBarIcon: ({ color, focused }) =>
-            focused ? (
-              <FontAwesome name="home" size={24} color={color} />
-            ) : (
-              <AntDesign name="home" size={24} color={color} />
-            ),
+          title: "Today's Habits",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="calendar-today"
+              color={color}
+              size={size}
+            />
+          ),
         }}
       />
       <Tabs.Screen
-        name="about"
+        name="streaks"
         options={{
-          title: "About",
-          tabBarIcon: ({ color, focused }) =>
-            focused ? (
-              <FontAwesome6 name="earth-americas" size={24} color={color} />
-            ) : (
-              <Ionicons name="earth-outline" size={24} color={color} />
-            ),
+          title: "Streaks",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="chart-line"
+              color={color}
+              size={size}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="add-habbit"
+        options={{
+          title: "Add Habbit",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons
+              name="plus-circle"
+              color={color}
+              size={size}
+            />
+          ),
         }}
       />
     </Tabs>
