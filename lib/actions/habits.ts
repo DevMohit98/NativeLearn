@@ -1,5 +1,5 @@
 import { DATABASE_ID, HABITS_TABLE_ID, tableDB } from "@/lib/appwrite";
-import { ID } from "react-native-appwrite";
+import { ID, Query } from "react-native-appwrite";
 
 export const createHabit = async ({
   title,
@@ -27,6 +27,16 @@ export const createHabit = async ({
       },
     );
     return res;
+  } catch (err) {
+    throw err;
+  }
+};
+export const fetchHabits = async ({ userId }: { userId: string }) => {
+  try {
+    const res = await tableDB.listRows(DATABASE_ID, HABITS_TABLE_ID, [
+      Query.equal("user_id", userId ?? null),
+    ]);
+    return res.rows;
   } catch (err) {
     throw err;
   }
