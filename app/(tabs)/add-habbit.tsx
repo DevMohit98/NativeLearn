@@ -1,5 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { createHabit } from "@/lib/actions/habits";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -23,7 +24,7 @@ const FREQUENCIES = ["daily", "weekly", "monthly"];
 export default function AddHabbit() {
   const user = useAuth();
   const theme = useTheme();
-
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [frequency, setFrequency] = useState("daily");
@@ -54,10 +55,14 @@ export default function AddHabbit() {
         setTitle("");
         setDescription("");
         setFrequency("daily");
+        router.replace("/");
       }
     } catch (err) {
-      console.log("Error adding habit", err);
-      setError("Failed to create habit");
+      if (err instanceof Error) {
+        setError(err?.message);
+        return;
+      }
+      setError("Error creating the habbit");
     } finally {
       setLoading(false);
     }
