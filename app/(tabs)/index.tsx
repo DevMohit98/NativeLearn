@@ -4,7 +4,7 @@ import { client, DATABASE_ID, HABITS_TABLE_ID } from "@/lib/appwrite";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import { Avatar, Button, Card, Chip, Surface, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -32,64 +32,18 @@ export default function Home() {
   };
 
   useEffect(() => {
+    if (!user) return;
+
     const channel = `databases.${DATABASE_ID}.tables.${HABITS_TABLE_ID}.rows`;
-    const unsubscribe = client.subscribe(channel, (response) => {
-      if (response.events.includes("databases.*.tables.*.rows.*.create")) {
-        getHabits();
-      } else if (
-        response.events.includes("databases.*.tables.*.rows.*.update")
-      ) {
-        getHabits();
-      } else if (
-        response.events.includes("databases.*.tables.*.rows.*.delete")
-      ) {
-        getHabits();
-      }
+
+    const unsubscribe = client.subscribe(channel, () => {
+      getHabits();
     });
+
     getHabits();
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, [user]);
-
-  const renderHabit = ({ item }: any) => {
-    return (
-      <Card style={styles.card}>
-        <Card.Content>
-          <View style={styles.cardHeader}>
-            <View style={styles.iconContainer}>
-              <Avatar.Icon size={48} icon="check-circle-outline" />
-            </View>
-
-            <View style={{ flex: 1 }}>
-              <Text variant="titleMedium" style={styles.title}>
-                {item.title}
-              </Text>
-
-              <Text variant="bodyMedium" style={styles.description}>
-                {item.description}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.bottomRow}>
-            <Surface style={styles.streakBox} elevation={1}>
-              <MaterialCommunityIcons name="fire" size={18} color="#ff9800" />
-
-              <Text style={styles.streakText}>
-                {item.streak_count} day streak
-              </Text>
-            </Surface>
-
-            <Chip compact mode="flat">
-              {item.frequency.charAt(0).toUpperCase() + item.frequency.slice(1)}
-            </Chip>
-          </View>
-        </Card.Content>
-      </Card>
-    );
-  };
 
   return (
     <SafeAreaView>
@@ -108,32 +62,68 @@ export default function Home() {
           Logout
         </Button>
       </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {habits.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <MaterialCommunityIcons
+              name="notebook-outline"
+              size={80}
+              color="#b0b0b0"
+            />
 
-      {habits.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <MaterialCommunityIcons
-            name="notebook-outline"
-            size={80}
-            color="#b0b0b0"
-          />
+            <Text variant="headlineSmall" style={styles.emptyTitle}>
+              No Habits Yet
+            </Text>
 
-          <Text variant="headlineSmall" style={styles.emptyTitle}>
-            No Habits Yet
-          </Text>
+            <Text style={styles.emptyText}>
+              Start building your routine by adding a habit.
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.listContent}>
+            {habits.map((item, index) => (
+              <Card style={styles.card} key={index}>
+                <Card.Content>
+                  <View style={styles.cardHeader}>
+                    <View style={styles.iconContainer}>
+                      <Avatar.Icon size={48} icon="check-circle-outline" />
+                    </View>
 
-          <Text style={styles.emptyText}>
-            Start building your routine by adding a habit.
-          </Text>
-        </View>
-      ) : (
-        <FlatList
-          data={habits}
-          keyExtractor={(item) => item.$id}
-          renderItem={renderHabit}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
-        />
-      )}
+                    <View style={{ flex: 1 }}>
+                      <Text variant="titleMedium" style={styles.title}>
+                        {item.title}
+                      </Text>
+
+                      <Text variant="bodyMedium" style={styles.description}>
+                        {item.description}
+                      </Text>
+                    </View>
+                  </View>
+
+                  <View style={styles.bottomRow}>
+                    <Surface style={styles.streakBox} elevation={1}>
+                      <MaterialCommunityIcons
+                        name="fire"
+                        size={18}
+                        color="#ff9800"
+                      />
+
+                      <Text style={styles.streakText}>
+                        {item.streak_count} day streak
+                      </Text>
+                    </Surface>
+
+                    <Chip compact mode="flat">
+                      {item.frequency.charAt(0).toUpperCase() +
+                        item.frequency.slice(1)}
+                    </Chip>
+                  </View>
+                </Card.Content>
+              </Card>
+            ))}
+          </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
