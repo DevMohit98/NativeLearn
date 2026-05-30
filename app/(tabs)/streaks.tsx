@@ -120,9 +120,13 @@ export default function Streaks() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text variant="headlineMedium" style={styles.heading}>
-        Habit Rankings 🏆
-      </Text>
+      <View style={styles.headingContainer}>
+        <Text variant="headlineMedium" style={styles.heading}>
+          Habit Rankings
+        </Text>
+
+        <MaterialCommunityIcons name="trophy" size={28} color="#f59e0b" />
+      </View>
 
       <Text variant="bodyMedium" style={styles.subHeading}>
         Track your most consistent habits
@@ -260,6 +264,12 @@ const styles = StyleSheet.create({
   heading: {
     fontWeight: "700",
     color: "#111827",
+    marginBottom: 4,
+  },
+  headingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
     marginBottom: 4,
   },
 

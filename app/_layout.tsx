@@ -8,7 +8,7 @@ const theme = {
   ...MD3LightTheme,
   colors: {
     ...MD3LightTheme.colors,
-    onPrimary: "#ffffff", // button text color
+    onPrimary: "#ffffff",
   },
 };
 
@@ -21,7 +21,15 @@ export default function RootLayout() {
             <KeyboardAvoidingView
               style={{ flex: 1 }}
               behavior={Platform.OS === "ios" ? "padding" : "height"}>
-              <Stack screenOptions={{ headerShown: false }} />
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  animation: "slide_from_right",
+                  contentStyle: {
+                    backgroundColor: theme.colors.background,
+                  },
+                }}
+              />
             </KeyboardAvoidingView>
           </SafeAreaProvider>
         </Provider>

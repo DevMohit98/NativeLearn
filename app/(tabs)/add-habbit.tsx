@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import {
   Button,
-  Card,
   SegmentedButtons,
   Text,
   TextInput,
@@ -80,71 +79,67 @@ export default function AddHabbit() {
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}>
           <View style={styles.wrapper}>
-            <Card style={styles.card}>
-              <Card.Content>
-                <View style={styles.headerSection}>
-                  <Text style={styles.emoji}>✨</Text>
+            <View style={styles.formContainer}>
+              <View style={styles.headerSection}>
+                <Text variant="headlineSmall" style={styles.heading}>
+                  Create New Habit
+                </Text>
 
-                  <Text variant="headlineSmall" style={styles.heading}>
-                    Create New Habit
-                  </Text>
+                <Text style={styles.subHeading}>
+                  Build consistency one day at a time
+                </Text>
+              </View>
 
-                  <Text style={styles.subHeading}>
-                    Build consistency one day at a time
-                  </Text>
-                </View>
+              <TextInput
+                label="Habit Title"
+                mode="outlined"
+                value={title}
+                onChangeText={setTitle}
+                style={styles.input}
+                outlineStyle={styles.inputOutline}
+                left={<TextInput.Icon icon="notebook-outline" />}
+              />
 
-                <TextInput
-                  label="Habit Title"
-                  mode="outlined"
-                  value={title}
-                  onChangeText={setTitle}
-                  style={styles.input}
-                  outlineStyle={styles.inputOutline}
-                  left={<TextInput.Icon icon="notebook-outline" />}
+              <TextInput
+                label="Description"
+                mode="outlined"
+                multiline
+                numberOfLines={4}
+                value={description}
+                onChangeText={setDescription}
+                style={styles.input}
+                outlineStyle={styles.inputOutline}
+                left={<TextInput.Icon icon="text" />}
+              />
+
+              <Text style={styles.frequencyLabel}>Frequency</Text>
+
+              <View style={styles.segmentWrapper}>
+                <SegmentedButtons
+                  value={frequency}
+                  onValueChange={setFrequency}
+                  buttons={FREQUENCIES.map((feq) => ({
+                    value: feq,
+                    label: feq.charAt(0).toUpperCase() + feq.slice(1),
+                  }))}
                 />
+              </View>
 
-                <TextInput
-                  label="Description"
-                  mode="outlined"
-                  multiline
-                  numberOfLines={4}
-                  value={description}
-                  onChangeText={setDescription}
-                  style={styles.input}
-                  outlineStyle={styles.inputOutline}
-                  left={<TextInput.Icon icon="text" />}
-                />
+              {error && (
+                <Text style={[styles.error, { color: theme.colors.error }]}>
+                  {error}
+                </Text>
+              )}
 
-                <Text style={styles.frequencyLabel}>Frequency</Text>
-
-                <View style={styles.segmentWrapper}>
-                  <SegmentedButtons
-                    value={frequency}
-                    onValueChange={setFrequency}
-                    buttons={FREQUENCIES.map((feq) => ({
-                      value: feq,
-                      label: feq.charAt(0).toUpperCase() + feq.slice(1),
-                    }))}
-                  />
-                </View>
-
-                {error && (
-                  <Text style={[styles.error, { color: theme.colors.error }]}>
-                    {error}
-                  </Text>
-                )}
-
-                <Button
-                  mode="contained"
-                  style={styles.button}
-                  contentStyle={styles.buttonContent}
-                  disabled={!title || !description || loading}
-                  onPress={handleSubmit}>
-                  {loading ? "Creating..." : "Add Habit"}
-                </Button>
-              </Card.Content>
-            </Card>
+              <Button
+                mode="contained"
+                style={styles.button}
+                contentStyle={styles.buttonContent}
+                disabled={!title || !description || loading}
+                onPress={handleSubmit}>
+                {loading ? "Creating..." : "Add Habit"}
+              </Button>
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -155,74 +150,98 @@ export default function AddHabbit() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f5f7fb",
+    backgroundColor: "#F8FAFC",
   },
 
   container: {
     flex: 1,
-    backgroundColor: "#f5f7fb",
+    backgroundColor: "#F8FAFC",
   },
 
   scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
-    paddingHorizontal: 20,
-    paddingBottom: 40,
+    paddingHorizontal: 24,
+    paddingVertical: 24,
+    paddingBottom: 120,
   },
 
   wrapper: {
     justifyContent: "center",
   },
 
-  card: {
-    borderRadius: 28,
-    backgroundColor: "#fff",
-    paddingVertical: 8,
-    elevation: 4,
+  formContainer: {
+    backgroundColor: "#FFFFFF",
 
-    shadowColor: "#000",
+    borderRadius: 32,
+
+    padding: 24,
+
+    borderWidth: 1,
+    borderColor: "#EEF2F7",
+
+    shadowColor: "#0F172A",
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 10,
     },
 
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
+    shadowOpacity: 0.04,
+    shadowRadius: 24,
+
+    elevation: 2,
   },
 
   headerSection: {
     alignItems: "center",
-    marginBottom: 28,
+    marginBottom: 32,
   },
 
-  emoji: {
-    fontSize: 42,
-    marginBottom: 10,
+  headerIcon: {
+    width: 72,
+    height: 72,
+
+    borderRadius: 24,
+
+    backgroundColor: "#EEF4FF",
+
+    justifyContent: "center",
+    alignItems: "center",
+
+    marginBottom: 16,
+  },
+
+  iconText: {
+    fontSize: 32,
   },
 
   heading: {
     fontWeight: "700",
     color: "#111827",
+    textAlign: "center",
   },
 
   subHeading: {
-    marginTop: 6,
-    color: "#6b7280",
+    marginTop: 8,
+    color: "#6B7280",
     textAlign: "center",
+    lineHeight: 22,
   },
 
   input: {
     marginBottom: 18,
-    backgroundColor: "#fff",
+    backgroundColor: "#FAFBFC",
   },
 
   inputOutline: {
-    borderRadius: 16,
+    borderRadius: 18,
+    borderWidth: 1.5,
   },
 
   frequencyLabel: {
     fontWeight: "600",
-    marginBottom: 10,
+    fontSize: 15,
+    marginBottom: 12,
     color: "#374151",
   },
 
@@ -237,10 +256,11 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    borderRadius: 16,
+    borderRadius: 18,
+    marginTop: 8,
   },
 
   buttonContent: {
-    paddingVertical: 10,
+    height: 56,
   },
 });

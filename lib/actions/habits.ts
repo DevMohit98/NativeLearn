@@ -80,7 +80,6 @@ export const updateHabit = async (id: string, payload: any) => {
       ...payload,
     });
   } catch (err) {
-    console.log(err, "11");
     throw err;
   }
 };

@@ -147,7 +147,7 @@ export default function Home() {
   }, [user]);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <View>
           <Text variant="headlineMedium" style={styles.heading}>
@@ -163,24 +163,24 @@ export default function Home() {
           Logout
         </Button>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {habits.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <MaterialCommunityIcons
-              name="notebook-outline"
-              size={80}
-              color="#b0b0b0"
-            />
+      {habits.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <MaterialCommunityIcons
+            name="notebook-outline"
+            size={80}
+            color="#b0b0b0"
+          />
 
-            <Text variant="headlineSmall" style={styles.emptyTitle}>
-              No Habits Yet
-            </Text>
+          <Text variant="headlineSmall" style={styles.emptyTitle}>
+            No Habits Yet
+          </Text>
 
-            <Text style={styles.emptyText}>
-              Start building your routine by adding a habit.
-            </Text>
-          </View>
-        ) : (
+          <Text style={styles.emptyText}>
+            Start building your routine by adding a habit.
+          </Text>
+        </View>
+      ) : (
+        <ScrollView>
           <View style={styles.listContent}>
             {habits.map((item, index) => (
               <Swipeable
@@ -245,8 +245,8 @@ export default function Home() {
               </Swipeable>
             ))}
           </View>
-        )}
-      </ScrollView>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
@@ -255,7 +255,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f7fb",
-    marginTop: 0,
   },
 
   header: {
