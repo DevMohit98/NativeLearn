@@ -1,6 +1,7 @@
 import { AuthProvider } from "@/context/AuthContext";
 import { Stack } from "expo-router";
 import { KeyboardAvoidingView, Platform } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD3LightTheme, Provider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 const theme = {
@@ -13,16 +14,18 @@ const theme = {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <Provider theme={theme}>
-        <SafeAreaProvider>
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}>
-            <Stack screenOptions={{ headerShown: false }} />
-          </KeyboardAvoidingView>
-        </SafeAreaProvider>
-      </Provider>
-    </AuthProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthProvider>
+        <Provider theme={theme}>
+          <SafeAreaProvider>
+            <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}>
+              <Stack screenOptions={{ headerShown: false }} />
+            </KeyboardAvoidingView>
+          </SafeAreaProvider>
+        </Provider>
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }

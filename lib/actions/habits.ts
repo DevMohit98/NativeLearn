@@ -41,3 +41,12 @@ export const fetchHabits = async ({ userId }: { userId: string }) => {
     throw err;
   }
 };
+
+export const deleteHabit = async ({ id }: { id: string }) => {
+  try {
+    await tableDB.deleteRow(DATABASE_ID, HABITS_TABLE_ID, id);
+    return true;
+  } catch (err) {
+    throw err;
+  }
+};

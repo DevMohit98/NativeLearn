@@ -1,16 +1,18 @@
 import { useAuth } from "@/context/AuthContext";
-import { fetchHabits } from "@/lib/actions/habits";
+import { deleteHabit, fetchHabits } from "@/lib/actions/habits";
 import { client, DATABASE_ID, HABITS_TABLE_ID } from "@/lib/appwrite";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
 import { Avatar, Button, Card, Chip, Surface, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const swipeableRefs = useRef<{ [key: string]: Swipeable | null }>({});
 
   const [habits, setHabits] = useState<any[]>([]);
 
@@ -30,6 +32,32 @@ export default function Home() {
       console.log(err);
     }
   };
+
+  const renderRightActions = () => (
+    <View style={styles.swipeActionRight}>
+      <MaterialCommunityIcons
+        name="check-circle-outline"
+        size={32}
+        color="#FFF"
+      />
+    </View>
+  );
+
+  const handleDelete = async (id: string) => {
+    try {
+      const res = await deleteHabit({ id });
+      if (res) {
+        console.log("Habit deleted");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const renderLeftActions = () => (
+    <View style={styles.swipeActionLeft}>
+      <MaterialCommunityIcons name="trash-can-outline" size={32} color="#FFF" />
+    </View>
+  );
 
   useEffect(() => {
     if (!user) return;
@@ -82,44 +110,60 @@ export default function Home() {
         ) : (
           <View style={styles.listContent}>
             {habits.map((item, index) => (
-              <Card style={styles.card} key={index}>
-                <Card.Content>
-                  <View style={styles.cardHeader}>
-                    <View style={styles.iconContainer}>
-                      <Avatar.Icon size={48} icon="check-circle-outline" />
+              <Swipeable
+                ref={(ref) => {
+                  swipeableRefs.current[item.$id] = ref;
+                }}
+                key={index}
+                overshootLeft={false}
+                overshootRight={false}
+                renderLeftActions={renderLeftActions}
+                renderRightActions={renderRightActions}
+                onSwipeableOpen={(direction) => {
+                  if (direction === "left") {
+                    handleDelete(item.$id);
+                  }
+                  swipeableRefs.current[item.$id]?.close();
+                }}>
+                <Card style={styles.card}>
+                  <Card.Content>
+                    <View style={styles.cardHeader}>
+                      <View style={styles.iconContainer}>
+                        <Avatar.Icon size={48} icon="check-circle-outline" />
+                      </View>
+
+                      <View style={{ flex: 1 }}>
+                        <Text variant="titleMedium" style={styles.title}>
+                          {item.title}
+                        </Text>
+
+                        <Text variant="bodyMedium" style={styles.description}>
+                          {item.description}
+                        </Text>
+                      </View>
                     </View>
 
-                    <View style={{ flex: 1 }}>
-                      <Text variant="titleMedium" style={styles.title}>
-                        {item.title}
-                      </Text>
+                    <View style={styles.bottomRow}>
+                      <Surface style={styles.streakBox} elevation={1}>
+                        <MaterialCommunityIcons
+                          name="fire"
+                          size={18}
+                          color="#ff9800"
+                        />
 
-                      <Text variant="bodyMedium" style={styles.description}>
-                        {item.description}
-                      </Text>
+                        <Text style={styles.streakText}>
+                          {item.streak_count} day streak
+                        </Text>
+                      </Surface>
+
+                      <Chip compact mode="flat">
+                        {item.frequency.charAt(0).toUpperCase() +
+                          item.frequency.slice(1)}
+                      </Chip>
                     </View>
-                  </View>
-
-                  <View style={styles.bottomRow}>
-                    <Surface style={styles.streakBox} elevation={1}>
-                      <MaterialCommunityIcons
-                        name="fire"
-                        size={18}
-                        color="#ff9800"
-                      />
-
-                      <Text style={styles.streakText}>
-                        {item.streak_count} day streak
-                      </Text>
-                    </Surface>
-
-                    <Chip compact mode="flat">
-                      {item.frequency.charAt(0).toUpperCase() +
-                        item.frequency.slice(1)}
-                    </Chip>
-                  </View>
-                </Card.Content>
-              </Card>
+                  </Card.Content>
+                </Card>
+              </Swipeable>
             ))}
           </View>
         )}
@@ -236,5 +280,25 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#6b7280",
     lineHeight: 22,
+  },
+  swipeActionLeft: {
+    justifyContent: "center",
+    alignItems: "flex-start",
+    flex: 1,
+    backgroundColor: "#e53935",
+    borderRadius: 18,
+    marginBottom: 18,
+    marginTop: 2,
+    paddingLeft: 16,
+  },
+  swipeActionRight: {
+    justifyContent: "center",
+    alignItems: "flex-end",
+    flex: 1,
+    backgroundColor: "#4caf50",
+    borderRadius: 18,
+    marginBottom: 18,
+    marginTop: 2,
+    paddingRight: 16,
   },
 });
