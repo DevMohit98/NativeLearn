@@ -1,6 +1,17 @@
 import { useAuth } from "@/context/AuthContext";
-import { deleteHabit, fetchHabits } from "@/lib/actions/habits";
-import { client, DATABASE_ID, HABITS_TABLE_ID } from "@/lib/appwrite";
+import {
+  completeHabit,
+  deleteHabit,
+  fetchHabits,
+  fetchTodayCompletion,
+  updateHabit,
+} from "@/lib/actions/habits";
+import {
+  client,
+  DATABASE_ID,
+  HABIT_COMPLETION_ID,
+  HABITS_TABLE_ID,
+} from "@/lib/appwrite";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
@@ -13,8 +24,10 @@ export default function Home() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const swipeableRefs = useRef<{ [key: string]: Swipeable | null }>({});
-
   const [habits, setHabits] = useState<any[]>([]);
+  const [completedHabits, setCompletedHabits] = useState<string[]>([]);
+
+  const isHabitCompleted = (id: string) => completedHabits.includes(id);
 
   const handleLogout = async () => {
     logout();
@@ -33,13 +46,29 @@ export default function Home() {
     }
   };
 
-  const renderRightActions = () => (
+  const getTodayCompleted = async () => {
+    try {
+      const data = await fetchTodayCompletion({ userId: user?.$id ?? "" });
+      const completions = data?.map((c) => c.habit_id);
+      setCompletedHabits(completions);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const renderRightActions = (id: string) => (
     <View style={styles.swipeActionRight}>
-      <MaterialCommunityIcons
-        name="check-circle-outline"
-        size={32}
-        color="#FFF"
-      />
+      {isHabitCompleted(id) ? (
+        <Text style={{ color: "#FFF" }} variant="headlineSmall">
+          Completed!
+        </Text>
+      ) : (
+        <MaterialCommunityIcons
+          name="check-circle-outline"
+          size={32}
+          color="#FFF"
+        />
+      )}
     </View>
   );
 
@@ -53,24 +82,68 @@ export default function Home() {
       console.log(err);
     }
   };
+
   const renderLeftActions = () => (
     <View style={styles.swipeActionLeft}>
       <MaterialCommunityIcons name="trash-can-outline" size={32} color="#FFF" />
     </View>
   );
 
+  const handleComplete = async (id: string) => {
+    if (!user?.$id || completedHabits?.includes(id)) return;
+
+    try {
+      const habit = habits.find((h) => h.$id === id);
+
+      if (!habit) return;
+
+      await completeHabit({
+        id,
+        userId: user.$id,
+      });
+
+      await updateHabit(id, {
+        streak_count: habit.streak_count + 1,
+        last_completed: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.log("Complete habit error:", err);
+    }
+  };
+
   useEffect(() => {
     if (!user) return;
 
-    const channel = `databases.${DATABASE_ID}.tables.${HABITS_TABLE_ID}.rows`;
+    const habitChannel = `databases.${DATABASE_ID}.tables.${HABITS_TABLE_ID}.rows`;
+    const completionChannel = `databases.${DATABASE_ID}.tables.${HABIT_COMPLETION_ID}.rows`;
 
-    const unsubscribe = client.subscribe(channel, () => {
-      getHabits();
+    const unsubscribe = client.subscribe(habitChannel, (res) => {
+      if (res.events.some((event) => event.endsWith(".create"))) {
+        getHabits();
+      }
+
+      if (res.events.some((event) => event.endsWith(".update"))) {
+        getHabits();
+      }
+
+      if (res.events.some((event) => event.endsWith(".delete"))) {
+        getHabits();
+      }
+    });
+
+    const completionSubcribe = client.subscribe(completionChannel, (res) => {
+      if (res.events.some((event) => event.endsWith(".create"))) {
+        getTodayCompleted();
+      }
     });
 
     getHabits();
+    getTodayCompleted();
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      completionSubcribe();
+    };
   }, [user]);
 
   return (
@@ -118,14 +191,20 @@ export default function Home() {
                 overshootLeft={false}
                 overshootRight={false}
                 renderLeftActions={renderLeftActions}
-                renderRightActions={renderRightActions}
+                renderRightActions={() => renderRightActions(item.$id)}
                 onSwipeableOpen={(direction) => {
                   if (direction === "left") {
                     handleDelete(item.$id);
+                  } else if (direction === "right") {
+                    handleComplete(item.$id);
                   }
                   swipeableRefs.current[item.$id]?.close();
                 }}>
-                <Card style={styles.card}>
+                <Card
+                  style={[
+                    styles.card,
+                    isHabitCompleted(item.$id) && styles.cardCompletedStyle,
+                  ]}>
                   <Card.Content>
                     <View style={styles.cardHeader}>
                       <View style={styles.iconContainer}>
@@ -216,6 +295,10 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.08,
     shadowRadius: 8,
+  },
+
+  cardCompletedStyle: {
+    opacity: 0.6,
   },
 
   cardHeader: {
