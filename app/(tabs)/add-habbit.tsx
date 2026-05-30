@@ -82,17 +82,26 @@ export default function AddHabbit() {
           <View style={styles.wrapper}>
             <Card style={styles.card}>
               <Card.Content>
-                <Text variant="headlineSmall" style={styles.heading}>
-                  Add New Habit
-                </Text>
+                <View style={styles.headerSection}>
+                  <Text style={styles.emoji}>✨</Text>
+
+                  <Text variant="headlineSmall" style={styles.heading}>
+                    Create New Habit
+                  </Text>
+
+                  <Text style={styles.subHeading}>
+                    Build consistency one day at a time
+                  </Text>
+                </View>
 
                 <TextInput
-                  label="Title"
+                  label="Habit Title"
                   mode="outlined"
                   value={title}
                   onChangeText={setTitle}
                   style={styles.input}
                   outlineStyle={styles.inputOutline}
+                  left={<TextInput.Icon icon="notebook-outline" />}
                 />
 
                 <TextInput
@@ -104,17 +113,21 @@ export default function AddHabbit() {
                   onChangeText={setDescription}
                   style={styles.input}
                   outlineStyle={styles.inputOutline}
+                  left={<TextInput.Icon icon="text" />}
                 />
 
-                <SegmentedButtons
-                  value={frequency}
-                  onValueChange={setFrequency}
-                  buttons={FREQUENCIES.map((feq) => ({
-                    value: feq,
-                    label: feq.charAt(0).toUpperCase() + feq.slice(1),
-                  }))}
-                  style={styles.segment}
-                />
+                <Text style={styles.frequencyLabel}>Frequency</Text>
+
+                <View style={styles.segmentWrapper}>
+                  <SegmentedButtons
+                    value={frequency}
+                    onValueChange={setFrequency}
+                    buttons={FREQUENCIES.map((feq) => ({
+                      value: feq,
+                      label: feq.charAt(0).toUpperCase() + feq.slice(1),
+                    }))}
+                  />
+                </View>
 
                 {error && (
                   <Text style={[styles.error, { color: theme.colors.error }]}>
@@ -128,7 +141,7 @@ export default function AddHabbit() {
                   contentStyle={styles.buttonContent}
                   disabled={!title || !description || loading}
                   onPress={handleSubmit}>
-                  {loading ? "Loading..." : "Add Habit"}
+                  {loading ? "Creating..." : "Add Habit"}
                 </Button>
               </Card.Content>
             </Card>
@@ -142,35 +155,59 @@ export default function AddHabbit() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f4f6f8",
+    backgroundColor: "#f5f7fb",
   },
 
   container: {
     flex: 1,
-    backgroundColor: "#f4f6f8",
+    backgroundColor: "#f5f7fb",
   },
 
   scrollContent: {
     flexGrow: 1,
-    backgroundColor: "#f4f6f8",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    paddingBottom: 40,
   },
 
   wrapper: {
-    flex: 1,
     justifyContent: "center",
-    padding: 20,
-    backgroundColor: "#f4f6f8",
   },
 
   card: {
-    borderRadius: 24,
-    paddingVertical: 10,
+    borderRadius: 28,
+    backgroundColor: "#fff",
+    paddingVertical: 8,
     elevation: 4,
+
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+  },
+
+  headerSection: {
+    alignItems: "center",
+    marginBottom: 28,
+  },
+
+  emoji: {
+    fontSize: 42,
+    marginBottom: 10,
   },
 
   heading: {
-    marginBottom: 24,
     fontWeight: "700",
+    color: "#111827",
+  },
+
+  subHeading: {
+    marginTop: 6,
+    color: "#6b7280",
     textAlign: "center",
   },
 
@@ -180,23 +217,30 @@ const styles = StyleSheet.create({
   },
 
   inputOutline: {
-    borderRadius: 14,
+    borderRadius: 16,
   },
 
-  segment: {
+  frequencyLabel: {
+    fontWeight: "600",
+    marginBottom: 10,
+    color: "#374151",
+  },
+
+  segmentWrapper: {
     marginBottom: 24,
   },
 
   error: {
     marginBottom: 16,
     fontSize: 14,
+    textAlign: "center",
   },
 
   button: {
-    borderRadius: 14,
+    borderRadius: 16,
   },
 
   buttonContent: {
-    paddingVertical: 8,
+    paddingVertical: 10,
   },
 });

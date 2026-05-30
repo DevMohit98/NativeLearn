@@ -98,3 +98,14 @@ export const fetchTodayCompletion = async ({ userId }: { userId: string }) => {
     throw err;
   }
 };
+
+export const fetchCompletions = async ({ userId }: { userId: string }) => {
+  try {
+    const res = await tableDB.listRows(DATABASE_ID, HABIT_COMPLETION_ID, [
+      Query.equal("user_id", userId ?? null),
+    ]);
+    return res.rows;
+  } catch (err) {
+    throw err;
+  }
+};
