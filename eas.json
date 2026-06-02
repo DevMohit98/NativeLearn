@@ -1,0 +1,48 @@
+{
+  "cli": {
+    "version": ">= 20.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_APPWRITE_PROJECT_ID": "69e666d3002a59fd9f82",
+        "EXPO_PUBLIC_APPWRITE_PROJECT_NAME": "Native Tracker",
+        "EXPO_PUBLIC_APPWRITE_ENDPOINT": "https://nyc.cloud.appwrite.io/v1",
+        "EXPO_PUBLIC_APPWRITE_PLATFORM": "co.mohitramola.nativetracker",
+        "EXPO_PUBLIC_DB_ID": "6a15b6f3000d1fa38bc2",
+        "EXPO_PUBLIC_HABITS_TABLE_ID": "habbit-table",
+        "EXPO_PUBLIC_HABIT_COMPLETION_ID": "habit_completions"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_APPWRITE_PROJECT_ID": "69e666d3002a59fd9f82",
+        "EXPO_PUBLIC_APPWRITE_PROJECT_NAME": "Native Tracker",
+        "EXPO_PUBLIC_APPWRITE_ENDPOINT": "https://nyc.cloud.appwrite.io/v1",
+        "EXPO_PUBLIC_APPWRITE_PLATFORM": "co.mohitramola.nativetracker",
+        "EXPO_PUBLIC_DB_ID": "6a15b6f3000d1fa38bc2",
+        "EXPO_PUBLIC_HABITS_TABLE_ID": "habbit-table",
+        "EXPO_PUBLIC_HABIT_COMPLETION_ID": "habit_completions"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_APPWRITE_PROJECT_ID": "69e666d3002a59fd9f82",
+        "EXPO_PUBLIC_APPWRITE_PROJECT_NAME": "Native Tracker",
+        "EXPO_PUBLIC_APPWRITE_ENDPOINT": "https://nyc.cloud.appwrite.io/v1",
+        "EXPO_PUBLIC_APPWRITE_PLATFORM": "co.mohitramola.nativetracker",
+        "EXPO_PUBLIC_DB_ID": "6a15b6f3000d1fa38bc2",
+        "EXPO_PUBLIC_HABITS_TABLE_ID": "habbit-table",
+        "EXPO_PUBLIC_HABIT_COMPLETION_ID": "habit_completions"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

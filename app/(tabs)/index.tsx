@@ -15,7 +15,7 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { Avatar, Button, Card, Chip, Surface, Text } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -147,7 +147,9 @@ export default function Home() {
   }, [user]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={styles.container}
+      edges={["top", "left", "bottom", "right"]}>
       <View style={styles.header}>
         <View>
           <Text variant="headlineMedium" style={styles.heading}>
@@ -261,9 +263,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 28,
     paddingHorizontal: 20,
-    padding: 0,
+    paddingTop: Platform.OS === "android" ? 12 : 8,
+    paddingBottom: 16,
+    marginBottom: 12,
   },
 
   heading: {
@@ -285,30 +288,42 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     borderRadius: 24,
     backgroundColor: "#ffffff",
-    elevation: 3,
-
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
+    // Use only elevation on Android; shadow props on iOS
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+      },
+      android: {
+        elevation: 3,
+      },
+    }),
   },
 
   cardCompletedStyle: {
-    opacity: 0.6,
+    backgroundColor: "#F3F4F6", // grey out the background
+    ...Platform.select({
+      ios: {
+        shadowOpacity: 0.03, // fade the shadow on iOS
+      },
+      android: {
+        elevation: 0, // remove shadow on Android
+      },
+    }),
   },
 
   cardHeader: {
     flexDirection: "row",
     alignItems: "flex-start",
-    gap: 14,
+    // Replace gap with marginRight on the icon for compatibility
   },
 
   iconContainer: {
     justifyContent: "center",
     alignItems: "center",
+    marginRight: 14, // replaces gap: 14
   },
 
   title: {
@@ -332,7 +347,6 @@ const styles = StyleSheet.create({
   streakBox: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 14,
@@ -342,6 +356,7 @@ const styles = StyleSheet.create({
   streakText: {
     fontWeight: "600",
     color: "#ff9800",
+    marginLeft: 6, // replaces gap: 6
   },
 
   emptyContainer: {
@@ -363,22 +378,24 @@ const styles = StyleSheet.create({
     color: "#6b7280",
     lineHeight: 22,
   },
+
   swipeActionLeft: {
     justifyContent: "center",
     alignItems: "flex-start",
     flex: 1,
     backgroundColor: "#e53935",
-    borderRadius: 18,
+    borderRadius: 24, // match card radius
     marginBottom: 18,
     marginTop: 2,
     paddingLeft: 16,
   },
+
   swipeActionRight: {
     justifyContent: "center",
     alignItems: "flex-end",
     flex: 1,
     backgroundColor: "#4caf50",
-    borderRadius: 18,
+    borderRadius: 24, // match card radius
     marginBottom: 18,
     marginTop: 2,
     paddingRight: 16,

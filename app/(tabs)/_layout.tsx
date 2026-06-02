@@ -1,5 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
+import { Platform } from "react-native";
 export default function TabsLayout() {
   return (
     <Tabs
@@ -12,9 +13,22 @@ export default function TabsLayout() {
           borderTopWidth: 0,
           elevation: 0,
           shadowOpacity: 0,
+          shadowOffset: { width: 0, height: 0 },
+          height: Platform.OS === "android" ? 60 : 80,
+          paddingBottom: Platform.OS === "android" ? 8 : 20,
+          paddingTop: 8,
+          paddingHorizontal: 4,
         },
         tabBarActiveTintColor: "#6200ee",
         tabBarInactiveTintColor: "#666666",
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: "500",
+          marginTop: 2,
+        },
+        tabBarIconStyle: {
+          marginTop: Platform.OS === "android" ? 4 : 0,
+        },
         tabBarHideOnKeyboard: true,
       }}>
       <Tabs.Screen
@@ -46,7 +60,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="add-habbit"
         options={{
-          title: "Add Habbit",
+          title: "Add Habit",
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons
               name="plus-circle"

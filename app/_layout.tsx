@@ -14,26 +14,27 @@ const theme = {
 
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <AuthProvider>
-        <Provider theme={theme}>
-          <SafeAreaProvider>
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <AuthProvider>
+          <Provider theme={theme}>
             <KeyboardAvoidingView
               style={{ flex: 1 }}
-              behavior={Platform.OS === "ios" ? "padding" : "height"}>
+              behavior={Platform.OS === "ios" ? "padding" : undefined}>
               <Stack
                 screenOptions={{
                   headerShown: false,
-                  animation: "slide_from_right",
+                  animation:
+                    Platform.OS === "android" ? "fade" : "slide_from_right",
                   contentStyle: {
                     backgroundColor: theme.colors.background,
                   },
                 }}
               />
             </KeyboardAvoidingView>
-          </SafeAreaProvider>
-        </Provider>
-      </AuthProvider>
-    </GestureHandlerRootView>
+          </Provider>
+        </AuthProvider>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
