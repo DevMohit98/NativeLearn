@@ -7,15 +7,10 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  TouchableOpacity,
   View,
 } from "react-native";
-import {
-  Button,
-  SegmentedButtons,
-  Text,
-  TextInput,
-  useTheme,
-} from "react-native-paper";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const FREQUENCIES = ["daily", "weekly", "monthly"];
@@ -56,7 +51,7 @@ export default function AddHabbit() {
         setError(err?.message);
         return;
       }
-      setError("Error creating the habbit");
+      setError("Error creating the habit");
     } finally {
       setLoading(false);
     }
@@ -109,17 +104,25 @@ export default function AddHabbit() {
 
             <Text style={styles.frequencyLabel}>Frequency</Text>
 
-            <View style={styles.segmentWrapper}>
-              <SegmentedButtons
-                value={frequency}
-                onValueChange={setFrequency}
-                style={styles.segmentedButtons}
-                buttons={FREQUENCIES.map((feq) => ({
-                  value: feq,
-                  label: feq.charAt(0).toUpperCase() + feq.slice(1),
-                  style: styles.segmentButton,
-                }))}
-              />
+            <View style={styles.frequencyRow}>
+              {FREQUENCIES.map((feq) => (
+                <TouchableOpacity
+                  key={feq}
+                  style={[
+                    styles.frequencyBtn,
+                    frequency === feq && styles.frequencyBtnActive,
+                  ]}
+                  onPress={() => setFrequency(feq)}
+                  activeOpacity={0.7}>
+                  <Text
+                    style={[
+                      styles.frequencyBtnText,
+                      frequency === feq && styles.frequencyBtnTextActive,
+                    ]}>
+                    {feq.charAt(0).toUpperCase() + feq.slice(1)}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
 
             {error && (
@@ -169,7 +172,6 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     borderWidth: 1,
     borderColor: "#EEF2F7",
-    // Platform-specific shadow
     ...Platform.select({
       ios: {
         shadowColor: "#0F172A",
@@ -206,7 +208,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#FAFBFC",
   },
 
-  // Explicit minHeight for multiline on Android
   multilineInput: {
     minHeight: Platform.OS === "android" ? 100 : 120,
   },
@@ -223,16 +224,48 @@ const styles = StyleSheet.create({
     color: "#374151",
   },
 
-  segmentWrapper: {
+  frequencyRow: {
+    flexDirection: "row",
+    backgroundColor: "#F3F4F6",
+    borderRadius: 14,
+    padding: 4,
     marginBottom: 24,
   },
 
-  segmentedButtons: {
-    borderRadius: 12,
+  frequencyBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
-  segmentButton: {
-    borderRadius: 12,
+  frequencyBtnActive: {
+    backgroundColor: "#FFFFFF",
+    borderWidth: 0.5,
+    borderColor: "#E5E7EB",
+    ...Platform.select({
+      ios: {
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.06,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+    }),
+  },
+
+  frequencyBtnText: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: "#9CA3AF",
+  },
+
+  frequencyBtnTextActive: {
+    color: "#6200ee",
+    fontWeight: "700",
   },
 
   error: {
