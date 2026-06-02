@@ -1,5 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { createHabit } from "@/lib/actions/habits";
+import { APP_COLORS } from "@/lib/constant";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
@@ -149,12 +150,12 @@ export default function AddHabbit() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: APP_COLORS.background,
   },
 
   container: {
     flex: 1,
-    backgroundColor: "#F8FAFC",
+    backgroundColor: APP_COLORS.background,
   },
 
   scrollContent: {
@@ -166,12 +167,12 @@ const styles = StyleSheet.create({
   },
 
   formContainer: {
-    backgroundColor: "#FFFFFF",
+    backgroundColor: APP_COLORS.card,
     borderRadius: 32,
     padding: 24,
     paddingBottom: 20,
     borderWidth: 1,
-    borderColor: "#EEF2F7",
+    borderColor: APP_COLORS.border,
     ...Platform.select({
       ios: {
         shadowColor: "#0F172A",

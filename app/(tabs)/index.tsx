@@ -12,6 +12,7 @@ import {
   HABIT_COMPLETION_ID,
   HABITS_TABLE_ID,
 } from "@/lib/appwrite";
+import { APP_COLORS } from "@/lib/constant";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
@@ -256,7 +257,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f7fb",
+    backgroundColor: APP_COLORS.background,
   },
 
   header: {
@@ -287,8 +288,9 @@ const styles = StyleSheet.create({
   card: {
     marginBottom: 18,
     borderRadius: 24,
-    backgroundColor: "#ffffff",
-    // Use only elevation on Android; shadow props on iOS
+    overflow: "hidden", // Important for Android rounded corners
+    backgroundColor: APP_COLORS.card,
+
     ...Platform.select({
       ios: {
         shadowColor: "#000",
@@ -297,19 +299,22 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
       },
       android: {
-        elevation: 3,
+        elevation: 2,
       },
     }),
   },
 
   cardCompletedStyle: {
-    backgroundColor: "#F3F4F6", // grey out the background
+    backgroundColor: "#FAFAFA",
+    borderWidth: 1,
+    borderColor: "#DCFCE7",
+
     ...Platform.select({
       ios: {
-        shadowOpacity: 0.03, // fade the shadow on iOS
+        shadowOpacity: 0.02,
       },
       android: {
-        elevation: 0, // remove shadow on Android
+        elevation: 0, // remove elevation to avoid dark corner artifacts
       },
     }),
   },
@@ -317,13 +322,12 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: "row",
     alignItems: "flex-start",
-    // Replace gap with marginRight on the icon for compatibility
   },
 
   iconContainer: {
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 14, // replaces gap: 14
+    marginRight: 14,
   },
 
   title: {
@@ -356,7 +360,7 @@ const styles = StyleSheet.create({
   streakText: {
     fontWeight: "600",
     color: "#ff9800",
-    marginLeft: 6, // replaces gap: 6
+    marginLeft: 6,
   },
 
   emptyContainer: {
@@ -380,24 +384,24 @@ const styles = StyleSheet.create({
   },
 
   swipeActionLeft: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "flex-start",
-    flex: 1,
     backgroundColor: "#e53935",
-    borderRadius: 24, // match card radius
+    borderRadius: 24,
+    overflow: "hidden",
     marginBottom: 18,
-    marginTop: 2,
     paddingLeft: 16,
   },
 
   swipeActionRight: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "flex-end",
-    flex: 1,
     backgroundColor: "#4caf50",
-    borderRadius: 24, // match card radius
+    borderRadius: 24,
+    overflow: "hidden",
     marginBottom: 18,
-    marginTop: 2,
     paddingRight: 16,
   },
 });

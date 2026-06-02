@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
+import { APP_COLORS } from "@/lib/constant";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -138,7 +139,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: APP_COLORS.background,
   },
 
   keyboardView: {

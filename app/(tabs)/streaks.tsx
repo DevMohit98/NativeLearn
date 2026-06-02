@@ -1,5 +1,6 @@
 import { useAuth } from "@/context/AuthContext";
 import { fetchCompletions, fetchHabits } from "@/lib/actions/habits";
+import { APP_COLORS } from "@/lib/constant";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
@@ -225,7 +226,7 @@ export default function Streaks() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f7fb",
+    backgroundColor: APP_COLORS.background,
   },
 
   // Inner wrapper handles padding instead of SafeAreaView
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
   card: {
     marginBottom: 16,
     borderRadius: 24,
-    backgroundColor: "#fff",
+    backgroundColor: APP_COLORS.card,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
