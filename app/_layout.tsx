@@ -1,9 +1,19 @@
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider, useAuth } from "@/context/AuthContext";
 import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
 import { KeyboardAvoidingView, Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MD3LightTheme, Provider } from "react-native-paper";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+
+SplashScreen.preventAutoHideAsync();
+
+SplashScreen.setOptions({
+  duration: 400,
+  fade: true,
+});
+
 const theme = {
   ...MD3LightTheme,
   colors: {
@@ -11,6 +21,28 @@ const theme = {
     onPrimary: "#ffffff",
   },
 };
+
+function RootNavigator() {
+  const { loading } = useAuth();
+
+  useEffect(() => {
+    if (!loading) {
+      SplashScreen.hide();
+    }
+  }, [loading]);
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        animation: Platform.OS === "android" ? "fade" : "slide_from_right",
+        contentStyle: {
+          backgroundColor: theme.colors.background,
+        },
+      }}
+    />
+  );
+}
 
 export default function RootLayout() {
   return (
@@ -21,16 +53,7 @@ export default function RootLayout() {
             <KeyboardAvoidingView
               style={{ flex: 1 }}
               behavior={Platform.OS === "ios" ? "padding" : undefined}>
-              <Stack
-                screenOptions={{
-                  headerShown: false,
-                  animation:
-                    Platform.OS === "android" ? "fade" : "slide_from_right",
-                  contentStyle: {
-                    backgroundColor: theme.colors.background,
-                  },
-                }}
-              />
+              <RootNavigator />
             </KeyboardAvoidingView>
           </Provider>
         </AuthProvider>

@@ -45,7 +45,7 @@ export default function AddHabbit() {
         setTitle("");
         setDescription("");
         setFrequency("daily");
-        router.replace("/");
+        router.replace("/(tabs)");
       }
     } catch (err) {
       if (err instanceof Error) {

@@ -14,8 +14,9 @@ import {
 } from "@/lib/appwrite";
 import { APP_COLORS } from "@/lib/constant";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import { Avatar, Button, Card, Chip, Surface, Text } from "react-native-paper";
@@ -77,7 +78,8 @@ export default function Home() {
     try {
       const res = await deleteHabit({ id });
       if (res) {
-        console.log("Habit deleted");
+        setHabits((prev) => prev.filter((h) => h.$id !== id));
+        setCompletedHabits((prev) => prev.filter((habitId) => habitId !== id));
       }
     } catch (err) {
       console.log(err);
@@ -103,14 +105,33 @@ export default function Home() {
         userId: user.$id,
       });
 
+      const now = new Date().toISOString();
+
       await updateHabit(id, {
         streak_count: habit.streak_count + 1,
-        last_completed: new Date().toISOString(),
+        last_completed: now,
       });
+
+      setCompletedHabits((prev) => [...prev, id]);
+      setHabits((prev) =>
+        prev.map((h) =>
+          h.$id === id
+            ? { ...h, streak_count: h.streak_count + 1, last_completed: now }
+            : h,
+        ),
+      );
     } catch (err) {
       console.log("Complete habit error:", err);
     }
   };
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!user?.$id) return;
+      getHabits();
+      getTodayCompleted();
+    }, [user?.$id]),
+  );
 
   useEffect(() => {
     if (!user) return;
@@ -119,31 +140,27 @@ export default function Home() {
     const completionChannel = `databases.${DATABASE_ID}.tables.${HABIT_COMPLETION_ID}.rows`;
 
     const unsubscribe = client.subscribe(habitChannel, (res) => {
-      if (res.events.some((event) => event.endsWith(".create"))) {
-        getHabits();
-      }
-
-      if (res.events.some((event) => event.endsWith(".update"))) {
-        getHabits();
-      }
-
-      if (res.events.some((event) => event.endsWith(".delete"))) {
+      if (
+        res.events.some(
+          (event) =>
+            event.endsWith(".create") ||
+            event.endsWith(".update") ||
+            event.endsWith(".delete"),
+        )
+      ) {
         getHabits();
       }
     });
 
-    const completionSubcribe = client.subscribe(completionChannel, (res) => {
+    const completionSubscribe = client.subscribe(completionChannel, (res) => {
       if (res.events.some((event) => event.endsWith(".create"))) {
         getTodayCompleted();
       }
     });
 
-    getHabits();
-    getTodayCompleted();
-
     return () => {
       unsubscribe();
-      completionSubcribe();
+      completionSubscribe();
     };
   }, [user]);
 
